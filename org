@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q1 2026 Accountability Chart - SkillSpout</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .metrics-bar {
+            background: #f7fafc;
+            padding: 20px 40px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .metric-badge {
+            background: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .metric-badge strong {
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .org-chart {
+            margin: 30px 0;
+        }
+
+        .level {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .role-box {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 200px;
+            max-width: 240px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .role-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .responsibilities-toggle {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 12px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            color: #667eea;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .responsibilities-toggle:hover {
+            background: #edf2f7;
+            border-color: #667eea;
+        }
+
+        .responsibilities-toggle::after {
+            content: ' ▼';
+            font-size: 0.7em;
+        }
+
+        .responsibilities-toggle.expanded::after {
+            content: ' ▲';
+        }
+
+        .responsibilities-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-top: 8px;
+        }
+
+        .responsibilities-content.expanded {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .responsibility-item {
+            background: #f7fafc;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: #4a5568;
+            border-left: 3px solid #667eea;
+        }
+
+        .responsibility-item strong {
+            color: #2d3748;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .role-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .role-name {
+            color: #4a5568;
+            font-size: 0.95em;
+            margin: 5px 0;
+        }
+
+        .role-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .status-new {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .status-pt {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-external {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .department-group {
+            border: 3px dashed #cbd5e0;
+            border-radius: 16px;
+            padding: 30px 20px 20px 20px;
+            margin: 10px;
+            background: rgba(102, 126, 234, 0.02);
+            position: relative;
+        }
+
+        .dept-label {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: white;
+            padding: 5px 15px;
+            color: #667eea;
+            font-weight: 700;
+            font-size: 0.95em;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .dept-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .implementation-team {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .impl-member {
+            background: #f0f4ff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            border: 1px solid #c3dafe;
+        }
+
+        .dotted-line-box {
+            border-style: dashed !important;
+            border-width: 2px !important;
+            border-color: #cbd5e0 !important;
+            opacity: 0.8;
+        }
+
+        .reporting-line {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .reporting-line::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 15px;
+            height: 2px;
+            background: #cbd5e0;
+            border-top: 2px dashed #cbd5e0;
+        }
+
+        .sub-group {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 3px dashed #cbd5e0;
+        }
+
+        .changes-section {
+            background: linear-gradient(135deg, #fef5e7 0%, #fdebd0 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 3px solid #f39c12;
+        }
+
+        .changes-section h3 {
+            color: #e67e22;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .change-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(243, 156, 18, 0.2);
+        }
+
+        .change-item:last-child {
+            border-bottom: none;
+        }
+
+        .change-icon {
+            width: 35px;
+            height: 35px;
+            background: #f39c12;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+
+        .support-contractors {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .support-contractors h4 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .contractor-list {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .contractor-badge {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            font-size: 0.9em;
+        }
+
+        .contractor-badge strong {
+            color: #667eea;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; }
+            .role-box:hover { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SkillSpout Accountability Chart</h1>
+            <p>Q1 2026 (January - March 2026)</p>
+        </div>
+
+        <div class="content">
+            <div class="org-chart">
+                <!-- LEVEL 1: VISIONARY -->
+                <div class="level">
+                    <div class="role-box">
+                        <div class="role-title">Visionary / CEO</div>
+                        <div class="role-name">Mel</div>
+                        <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                        <div class="responsibilities-content">
+                            <div class="responsibility-item"><strong>Big Relationships</strong> Cultivate strategic partnerships, investor connections, and key enterprise client relationships that drive growth</div>
+                            <div class="responsibility-item"><strong>Big Ideas</strong> Drive product innovation (MomentumAI, Agentic, platform) and identify new market opportunities</div>
+                            <div class="responsibility-item"><strong>Big Deals</strong> Lead major client acquisitions and strategic partnerships that move the needle</div>
+                            <div class="responsibility-item"><strong>Culture Guardian</strong> Protect company values and champion "special projects" like AI implementation automation and platform development</div>
+                            <div class="responsibility-item"><strong>Creative Problem Solving</strong> Apply entrepreneurial thinking to overcome obstacles and seize emerging opportunities in AI adoption</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEVEL 2: INTEGRATOR + EA -->
+                <div class="level">
+                    <div class="role-box">
+                        <div class="role-title">Integrator / COO</div>
+                        <div class="role-name">Sarah</div>
+                        <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                        <div class="responsibilities-content">
+                            <div class="responsibility-item"><strong>Lead the Leadership Team</strong> Manage and hold accountable Nicole (Marketing), Lauren (Implementation), and Kasmira (Tech/Automation)</div>
+                            <div class="responsibility-item"><strong>Integrate Major Functions</strong> Ensure Sales, Marketing, Delivery, and Operations work in harmony toward company goals</div>
+                            <div class="responsibility-item"><strong>Run Day-to-Day Operations</strong> Own execution of quarterly and annual plans, keeping the business running smoothly</div>
+                            <div class="responsibility-item"><strong>Be the Tie-Breaker</strong> Make final calls on operational decisions and resolve conflicts between departments</div>
+                            <div class="responsibility-item"><strong>Execute Special Projects</strong> Drive initiatives assigned by Mel (e.g., hiring, systems implementation, process improvements)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- LEVEL 2.5: EA (OFF TO SIDE) -->
+                <div class="level" style="justify-content: flex-end; margin-top: -60px; margin-bottom: 20px;">
+                    <div class="role-box dotted-line-box" style="margin-right: 40px;">
+                        <div class="role-title">EA / PA</div>
+                        <div class="role-name">Anita Fierst</div>
+                        <div class="role-status status-new">Starting Nov 17</div>
+                        <div class="role-name" style="font-size: 0.75em; margin-top: 5px; color: #718096;">← Supports Sarah</div>
+                        <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                        <div class="responsibilities-content">
+                            <div class="responsibility-item"><strong>Time & Attention Protector</strong> Manage Sarah's professional and personal calendar, ensuring her time and energy are optimized for highest-priority leadership work</div>
+                            <div class="responsibility-item"><strong>Coordination Master</strong> Schedule meetings, prepare agendas and materials, take notes, and track action items across the leadership team</div>
+                            <div class="responsibility-item"><strong>Gatekeeper & Filter</strong> Screen requests, handle routine matters, and create space for Sarah to focus on strategic integration work</div>
+                            <div class="responsibility-item"><strong>Project & Commitment Tracker</strong> Follow up on deadlines, manage action items, and ensure nothing falls through the cracks professionally or personally</div>
+                            <div class="responsibility-item"><strong>Life & Work Enabler</strong> Handle logistics, administrative tasks, travel, and operational details across all aspects of Sarah's role so she can focus purely on leading the business</div>
+                            <div class="responsibility-item"><strong>Proactive Scheduling for Mel</strong> Anticipate opportunities to optimize Mel's time (e.g., when driving), proactively scheduling internal meetings with Sarah or team members to maximize productivity</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEVEL 3: DEPARTMENTS -->
+                <div class="level">
+                    <!-- MARKETING -->
+                    <div class="department-group">
+                        <span class="dept-label">MARKETING</span>
+                        <div class="dept-content">
+                            <div class="role-box">
+                                <div class="role-title">Head of Marketing</div>
+                                <div class="role-name">Nicole</div>
+                                <div class="role-status status-new">Started Nov 10</div>
+                                <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Sarah</div>
+                                <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                <div class="responsibilities-content">
+                                    <div class="responsibility-item"><strong>Lead, Manage & Hold Accountable</strong> The marketing team and contractors to deliver results aligned with company goals</div>
+                                    <div class="responsibility-item"><strong>Demand Generation Architect</strong> Build multi-channel marketing engine (events, content, digital, partnerships) that generates qualified enterprise leads consistently</div>
+                                    <div class="responsibility-item"><strong>Brand Storyteller</strong> Amplify Mel and team's thought leadership through content creation, speaking opportunities, and strategic visibility</div>
+                                    <div class="responsibility-item"><strong>Customer Marketing Strategist</strong> Develop case studies, ROI stories, and success narratives that prove value and drive referrals</div>
+                                    <div class="responsibility-item"><strong>Growth Experimenter</strong> Test new channels and tactics, measure what works, and optimize spend toward highest-ROI activities</div>
+                                    <div class="responsibility-item"><strong>Marketing Team Builder</strong> Lead and develop marketing support resources to create cohesive campaigns and materials</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SALES & CLIENT SUCCESS -->
+                    <div class="department-group">
+                        <span class="dept-label">SALES & CLIENT SUCCESS</span>
+                        <div class="dept-content">
+                            <div class="role-box">
+                                <div class="role-title">Acting Sales Lead</div>
+                                <div class="role-name">Nicole</div>
+                                <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Sarah</div>
+                                <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                <div class="responsibilities-content">
+                                    <div class="responsibility-item"><strong>Team Training & Development</strong> Train SDR team on sales techniques, product knowledge, and messaging</div>
+                                    <div class="responsibility-item"><strong>Sales & Marketing Alignment</strong> Ensure sales messaging aligns with marketing and accurately represents product and brand</div>
+                                    <div class="responsibility-item"><strong>Sales Process Designer</strong> Help design and refine sales processes, workflows, and qualification criteria</div>
+                                    <div class="responsibility-item"><strong>Day-to-Day Support</strong> Provide daily guidance and support to SDRs (dotted line reporting for operational concerns)</div>
+                                </div>
+                            </div>
+                            <div class="sub-group" style="display: flex; gap: 15px; flex-wrap: wrap; width: 100%; margin-left: 0px;">
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Customer Success Specialist</div>
+                                    <div class="role-name">Ashton</div>
+                                    <div class="role-name" style="font-size: 0.75em; margin-top: 5px; color: #718096;">↑ Reports to Nicole</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Own Top-of-Funnel Pipeline Creation</strong> Consistently generate and advance qualified opportunities through proactive outreach, follow-up, and timely lead communication</div>
+                                        <div class="responsibility-item"><strong>Qualify Leads & Book Meetings</strong> Call, email, and message prospects to qualify fit, confirm need and timing, and schedule sales meetings for the appropriate closer</div>
+                                        <div class="responsibility-item"><strong>Close Small Deals Independently</strong> Run discovery and demo conversations for smaller engagements and close those opportunities following our defined sales process</div>
+                                        <div class="responsibility-item"><strong>Maintain Clean CRM & Documentation</strong> Capture accurate notes, next steps, and deal status in the CRM so leadership has clear visibility and handoffs are seamless</div>
+                                        <div class="responsibility-item"><strong>Support Events & Smooth Onboarding</strong> Assist with event-related outreach and follow-up, and coordinate with internal teams to ensure new clients are set up and welcomed effectively</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Account Executive</div>
+                                    <div class="role-name">Robyne</div>
+                                    <div class="role-name" style="font-size: 0.75em; margin-top: 5px; color: #718096;">↑ Reports to Nicole</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Own Top-of-Funnel Pipeline Creation</strong> Consistently generate and advance qualified opportunities through proactive outreach, follow-up, and timely lead communication</div>
+                                        <div class="responsibility-item"><strong>Qualify Leads & Book Meetings</strong> Call, email, and message prospects to qualify fit, confirm need and timing, and schedule sales meetings for the appropriate closer</div>
+                                        <div class="responsibility-item"><strong>Close Small Deals Independently</strong> Run discovery and demo conversations for smaller engagements and close those opportunities following our defined sales process</div>
+                                        <div class="responsibility-item"><strong>Maintain Clean CRM & Documentation</strong> Capture accurate notes, next steps, and deal status in the CRM so leadership has clear visibility and handoffs are seamless</div>
+                                        <div class="responsibility-item"><strong>Support Events & Smooth Onboarding</strong> Assist with event-related outreach and follow-up, and coordinate with internal teams to ensure new clients are set up and welcomed effectively</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IMPLEMENTATION COORDINATION -->
+                    <div class="department-group">
+                        <span class="dept-label">IMPLEMENTATION COORDINATION</span>
+                        <div class="dept-content">
+                            <div class="role-box">
+                                <div class="role-title">Implementation Coordinator</div>
+                                <div class="role-name">Jen</div>
+                                <div class="role-name" style="font-size: 0.85em; margin-top: 5px;">Reports to: Sarah</div>
+                                <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                <div class="responsibilities-content">
+                                    <div class="responsibility-item"><strong>Contract & Documentation Manager</strong> Send SOWs and MSAs promptly after sales meetings, ensuring clean paperwork and signatures</div>
+                                    <div class="responsibility-item"><strong>TechCred Navigator</strong> Handle all TechCred applications, paperwork, and compliance to maximize state funding for clients</div>
+                                    <div class="responsibility-item"><strong>Implementation Scheduler</strong> Schedule orientation, all training phase meetings, and kickoff meetings on the calendar (typically 1 month before first training date), then conduct internal handoff meeting to implementers who take over scheduling for debriefs and TA sessions</div>
+                                    <div class="responsibility-item"><strong>Sales-to-Delivery Bridge</strong> Ensure seamless handoff from sales to implementation with all details captured and communicated</div>
+                                    <div class="responsibility-item"><strong>Process Guardian</strong> Maintain systems and workflows that keep implementation projects organized and on track</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DELIVERY TEAM -->
+                    <div class="department-group">
+                        <span class="dept-label">DELIVERY TEAM</span>
+                        <div class="dept-content">
+                            <div class="role-box">
+                                <div class="role-title">Lead Implementation Specialist</div>
+                                <div class="role-name">Lauren</div>
+                                <div class="role-name" style="font-size: 0.85em; color: #718096; margin-top: 5px;">Manages team + training</div>
+                                <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Sarah</div>
+                                <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                <div class="responsibilities-content">
+                                    <div class="responsibility-item"><strong>Lead, Manage & Hold Accountable</strong> The implementation team of 8 specialists to deliver consistent, excellent client results</div>
+                                    <div class="responsibility-item"><strong>Content & Materials Creator</strong> Build and maintain implementation playbooks, training materials, and delivery resources aligned with vision from Head of Product</div>
+                                    <div class="responsibility-item"><strong>Quality Champion</strong> Know what we are delivering (from Product team) inside and out, set delivery standards, review client work, and ensure every implementation meets SkillSpout excellence criteria</div>
+                                    <div class="responsibility-item"><strong>Cross Team Collaborator</strong> Facilitate handoffs and communications between Implementation team and Technology & Automation, Sales, Client Success, and Product Development, keeping all departments up to date with insights from delivery and ensuring Implementers receive relevant updates from each team</div>
+                                </div>
+                            </div>
+                            <div class="sub-group" style="width: 100%; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">Mel</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">Sarah</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">JP</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">Sean</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">Cameron</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">Sam</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">Leo</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Implementation Specialist</div>
+                                    <div class="role-name">Julie</div>
+                                    <div class="role-status status-new">December</div>
+                                    <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Lauren</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Client Transformation Catalyst</strong> Deliver training and consulting that guides companies through AI adoption and transformation, helping employees develop skills and practical applications that drive ROI</div>
+                                        <div class="responsibility-item"><strong>Relationship Manager</strong> Own the client relationship throughout implementation, including surveys, TA sessions, lunch & learns, and ongoing communication</div>
+                                        <div class="responsibility-item"><strong>Program Customizer</strong> Tailor curriculum, examples, and use cases to each client's industry, challenges, and goals for maximum relevance and impact</div>
+                                        <div class="responsibility-item"><strong>Data & Feedback Collector</strong> Gather client feedback through surveys and conversations, using insights to improve delivery and demonstrate results</div>
+                                        <div class="responsibility-item"><strong>Ongoing Support Provider</strong> Conduct regular check-ins, troubleshooting sessions, and meetings to ensure client success throughout the engagement</div>
+                                        <div class="responsibility-item"><strong>Continuous Learner</strong> Stay current on major LLMs and AI developments by participating in AI news channel and learning from updates announced by Head of Product</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCT -->
+                    <div class="department-group" style="width: 48%; min-width: 450px;">
+                        <span class="dept-label">PRODUCT</span>
+                        <div class="dept-content">
+                            <div class="role-box">
+                                <div class="role-title">Head of Product</div>
+                                <div class="role-name">Mel</div>
+                                <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                <div class="responsibilities-content">
+                                    <div class="responsibility-item"><strong>Product & Platform Strategist</strong> Define and drive the strategic direction for our programs, technology, and services that help organizations transform using AI</div>
+                                    <div class="responsibility-item"><strong>Innovation Architect</strong> Envision new offerings, delivery models, platform features, and methodologies that enable structured, safe, and accessible AI transformation</div>
+                                    <div class="responsibility-item"><strong>Cross-Functional Orchestrator</strong> Collaborate across all departments to ensure products are scalable, effective, profitable, and aligned with company goals</div>
+                                    <div class="responsibility-item"><strong>Market Opportunity Scout</strong> Identify emerging client needs and AI trends that inform product evolution and new program development</div>
+                                    <div class="responsibility-item"><strong>Design Internal Training Vision</strong> Create training vision and strategy for Implementation Specialists to ensure we develop the team we need ourselves</div>
+                                    <div class="responsibility-item"><strong>Lead Internal Team Amplification & Education</strong> Keep the team informed and educated about AI happenings, new developments, and relevant updates</div>
+                                </div>
+                            </div>
+                            <div class="sub-group" style="width: 100%; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                                <div class="role-box reporting-line">
+                                    <div class="role-title">Product Development</div>
+                                    <div class="role-name">Mel</div>
+                                    <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                    <div class="responsibilities-content">
+                                        <div class="responsibility-item"><strong>Build Curriculum & Materials</strong> Create course content, exercises, and resources that drive client transformation</div>
+                                        <div class="responsibility-item"><strong>Develop Platform Features</strong> Build and iterate on platform functionality, tools, and technical infrastructure</div>
+                                        <div class="responsibility-item"><strong>Test & Refine Programs</strong> Pilot new programs and methodologies, gathering feedback to optimize before full rollout</div>
+                                        <div class="responsibility-item"><strong>Participate in Pilot Implementations</strong> Attend client implementations where new products or product updates are being piloted to observe, support, and gather real-time feedback</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BUSINESS SERVICES -->
+                    <div class="department-group" style="width: 48%; min-width: 450px;">
+                        <span class="dept-label">BUSINESS SERVICES</span>
+                        <div class="dept-content">
+                            <div class="role-box">
+                                <div class="role-title">Technology & Automation Engineer</div>
+                                <div class="role-name">Kasmira</div>
+                                <div class="role-name" style="font-size: 0.8em; margin-top: 8px; color: #718096;">Reports to: Sarah</div>
+                                <div class="responsibilities-toggle" onclick="toggleResponsibilities(this)">View Responsibilities</div>
+                                <div class="responsibilities-content">
+                                    <div class="responsibility-item"><strong>Automation Architect</strong> Design and implement automation solutions that reduce manual work and enable scaling without proportional headcount growth</div>
+                                    <div class="responsibility-item"><strong>Integration Specialist</strong> Connect all systems (HubSpot, platform, scheduling tools) to create seamless data flow and eliminate duplicate entry</div>
+                                    <div class="responsibility-item"><strong>Tool & Vendor Manager</strong> Research, evaluate, and manage technology solutions and external resources that solve business needs efficiently</div>
+                                    <div class="responsibility-item"><strong>Technical Problem Solver</strong> Troubleshoot systems issues, optimize workflows, and find creative technical solutions to operational challenges</div>
+                                    <div class="responsibility-item"><strong>Marketing & Sales Operations Support</strong> Assist with marketing technology, HubSpot workflows, and sales automation implementation</div>
+                                    <div class="responsibility-item"><strong>Special Projects Executor</strong> Support Integrator on special projects informed by the Visionary (who happens to be extremely technical)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="changes-section">
+                <h3>🔄 Q1 2026 Key Changes</h3>
+                <div class="change-item">
+                    <div class="change-icon">✓</div>
+                    <div><strong>Nicole hired as Head of Marketing</strong> (Nov 10) - Takes over marketing from Mel</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-icon">✓</div>
+                    <div><strong>Anita hired as EA/PA to Sarah</strong> (Nov 17) - Executive support for COO</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-icon">✓</div>
+                    <div><strong>Kasmira transitions to full-time Technology & Automation Engineer</strong> - Dedicated focus on automation, integrations, and special projects</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-icon">+</div>
+                    <div><strong>Julie hired as Implementation Specialist</strong> (December) - Growing delivery capacity in Cleveland</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-icon">📊</div>
+                    <div><strong>Sales & Client Success team structured</strong> - Ashton & Robyne report to Nicole (Acting Sales Lead)</div>
+                </div>
+                <div class="change-item">
+                    <div class="change-icon">👥</div>
+                    <div><strong>Implementation team at 8 specialists & 1 lead</strong> - Lauren leads Mel, Sarah, JP, Sean, Cameron, Sam, Leo, + Julie</div>
+                </div>
+            </div>
+
+            <div class="support-contractors">
+                <h4>External Contractors & Support Resources</h4>
+                <div class="contractor-list">
+                    <div class="contractor-badge"><strong>Legal Counsel</strong> (Reports to Sarah)</div>
+                    <div class="contractor-badge"><strong>Accounting Services</strong> (Reports to Sarah)</div>
+                    <div class="contractor-badge"><strong>Recruiting Services</strong> (Reports to Sarah)</div>
+                    <div class="contractor-badge"><strong>Marketing Support</strong> (Reports to Nicole)</div>
+                    <div class="contractor-badge"><strong>Tech Support</strong> (Reports to Kasmira)</div>
+                    <div class="contractor-badge"><strong>Bookkeeper & HR Support</strong> (Reports to Sarah)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleResponsibilities(element) {
+            const content = element.nextElementSibling;
+            const isExpanded = content.classList.contains('expanded');
+            
+            if (isExpanded) {
+                content.classList.remove('expanded');
+                element.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                element.classList.add('expanded');
+            }
+        }
+    </script>
+</body>
+</html>
